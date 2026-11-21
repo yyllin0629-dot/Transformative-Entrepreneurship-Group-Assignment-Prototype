@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TutorMatch Interactive Prototype</title>
+<style>
+:root{--teal:#7652C8;--deep:#4C347F;--mint:#F0EAFE;--ink:#302447;--muted:#766A88;--line:#E8E1F2;--bg:#F7F4FC}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:linear-gradient(135deg,#F6F0FF,#F8F6FC);color:var(--ink)}
+.app{max-width:430px;min-height:100vh;margin:auto;background:white;box-shadow:0 18px 60px #30244718;position:relative}
+header{padding:22px 22px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}
+.logo{font-weight:850;font-size:22px;color:var(--deep);letter-spacing:-.5px}.logo span{color:var(--teal)}
+.pill{background:var(--mint);color:var(--teal);padding:7px 11px;border-radius:99px;font-size:12px;font-weight:700}
+main{padding:22px}
+.eyebrow{font-size:12px;color:var(--teal);font-weight:800;letter-spacing:1.3px;text-transform:uppercase}
+h1{font-size:27px;line-height:1.15;margin:8px 0 9px;letter-spacing:-.8px}p{color:var(--muted);line-height:1.5;font-size:14px}
+label{font-size:12px;font-weight:700;color:#577078;display:block;margin:14px 0 7px}
+input,select{width:100%;padding:13px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font-size:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;background:var(--teal);color:white;padding:14px 16px;border-radius:13px;font-weight:800;cursor:pointer;width:100%;margin-top:15px;box-shadow:0 8px 18px #7652C825}.btn.secondary{background:white;color:var(--teal);border:1px solid #D7C8F4;box-shadow:none}.btn.text{background:transparent;color:var(--teal);box-shadow:none;padding:8px;width:auto}
+.card{border:1px solid var(--line);border-radius:17px;padding:14px;margin:12px 0;background:white;box-shadow:0 4px 18px #30244707}
+.tutor{display:flex;gap:12px;align-items:center}.avatar{width:64px;height:64px;border-radius:15px;object-fit:cover;background:#E8DDF8}.name{font-weight:800}.small{font-size:12px;color:var(--muted);margin-top:4px}.rate{font-weight:850;color:var(--deep);font-size:15px}.verified{font-size:11px;background:#eaf8ef;color:#23834a;padding:5px 7px;border-radius:7px;font-weight:800;display:inline-block;margin-top:5px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.tag{background:#F7F3FC;border:1px solid var(--line);padding:6px 8px;border-radius:8px;font-size:11px;color:#716483}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.back{border:0;background:none;color:var(--teal);font-weight:800;padding:0;cursor:pointer;margin-bottom:12px}
+.hidden{display:none}.bottom{padding:14px 22px 24px;color:#8ba0a5;font-size:11px;text-align:center;border-top:1px solid var(--line)}
+.slot{padding:11px;border:1px solid var(--line);border-radius:10px;text-align:center;cursor:pointer;font-weight:700;font-size:13px}.slot.active{background:var(--mint);border-color:var(--teal);color:var(--teal)}
+.success{width:78px;height:78px;border-radius:50%;background:#e6f7ee;color:#23834a;display:grid;place-items:center;font-size:36px;margin:12px auto}
+hr{border:0;border-top:1px solid var(--line);margin:16px 0}
+</style>
+</head>
+<body><div class="app">
+<header><div class="logo">Tutor<span>Match</span></div><div class="pill">MVP Demo</div></header>
+<main>
+<section id="home">
+<div class="eyebrow">Find your learning match</div><h1>The right tutor,<br>at your pace.</h1><p>Search trusted tutors by subject, budget and schedule.</p>
+<label>What subject do you need?</label><input id="subject" placeholder="e.g. Mathematics, English, Physics">
+<div class="grid2"><div><label>Budget (RM/hour)</label><select id="budget"><option value="1000">Any budget</option><option value="30">Up to RM30</option><option value="50">Up to RM50</option><option value="80">Up to RM80</option></select></div><div><label>Lesson format</label><select id="format"><option>Any format</option><option>Online</option><option>In-person</option></select></div></div>
+<div class="grid2"><div><label>Availability</label><select id="availability"><option>Any time</option><option>Weekdays</option><option>Weekends</option><option>Evenings</option></select></div><div><label>Tutor preference</label><select id="gender"><option>Any</option><option>Female</option><option>Male</option></select></div></div>
+<button class="btn" onclick="search()">Search Tutors →</button>
+<div class="card"><div class="row"><b>Why TutorMatch?</b><span class="verified">✓ Verified profiles</span></div><p>Compare tutor information in one place and choose according to your needs.</p></div>
+</section>
+<section id="results" class="hidden"><button class="back" onclick="show('home')">← Back to search</button><div class="eyebrow">Matching tutors</div><h1>Recommended for you</h1><p id="resultNote"></p><div id="tutorList"></div></section>
+<section id="profile" class="hidden"><button class="back" onclick="show('results')">← Back to results</button><div id="profileContent"></div></section>
+<section id="booking" class="hidden"><button class="back" onclick="show('profile')">← Back to tutor</button><div class="eyebrow">Book a session</div><h1>Choose a time</h1><p>Demo booking — no payment or real appointment is created.</p><label>Date</label><input id="date" type="date"><label>Available times</label><div class="grid2" id="slots"><div class="slot" onclick="pickSlot(this)">10:00 AM</div><div class="slot" onclick="pickSlot(this)">2:00 PM</div><div class="slot" onclick="pickSlot(this)">4:30 PM</div><div class="slot" onclick="pickSlot(this)">7:00 PM</div></div><label>Lesson format</label><div class="grid2"><div class="slot active" onclick="formatPick(this)">Online</div><div class="slot" onclick="formatPick(this)">In-person</div></div><button class="btn" onclick="confirmBooking()">Confirm booking →</button></section>
+<section id="confirmed" class="hidden"><div class="success">✓</div><div class="eyebrow" style="text-align:center">Request confirmed</div><h1 style="text-align:center">You're all set!</h1><p style="text-align:center">This is a prototype confirmation. It does not contact a tutor.</p><div class="card" id="confirmationDetails"></div><button class="btn" onclick="show('home')">Back to Home</button></section>
+</main><div class="bottom">TutorMatch • Student–tutor discovery prototype</div></div>
+<script>
+const tutors=[
+{name:"Aisha Rahman",photo:"https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=300&q=80",subjects:"Mathematics · Add Maths",rate:35,stars:"4.9",reviews:28,format:"Online · In-person",availability:"Weekends · Evenings",gender:"Female",bio:"Friendly, structured lessons with step-by-step explanations and practice questions.",qual:"BSc Mathematics · 4 years tutoring"},
+{name:"Daniel Lim",photo:"https://images.unsplash.com/photo-150064 Imagegen is failed, maybe ignore, HTML prototype. Check typo in URL (space causes bad). fix. Also dynamic clickable. create file and maybe use imagegen retry? not necessary as prototype itself. Need complete script. python tool create. 
+
+,{name:"Farah Nordin",photo:"https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",subjects:"English · Writing",rate:45,stars:"5.0",reviews:19,format:"Online",availability:"Weekdays",gender:"Female",bio:"Build confidence in writing, comprehension and exam preparation.",qual:"TESL certified · 3 years tutoring"}
+];
+let current=null, chosenSlot="", chosenFormat="Online";
+function show(id){document.querySelectorAll("main section").forEach(s=>s.classList.add("hidden"));document.getElementById(id).classList.remove("hidden");}
+function search(){let subj=document.getElementById("subject").value.trim().toLowerCase(), budget=+document.getElementById("budget").value, fmt=document.getElementById("format").value, gender=document.getElementById("gender").value;let found=tutors.filter(t=>(!subj||t.subjects.toLowerCase().includes(subj)||subj.includes("math")&&t.subjects.toLowerCase().includes("math"))&&t.rate<=budget&&(fmt==="Any format"||t.format.includes(fmt))&&(gender==="Any"||t.gender===gender));if(!found.length)found=tutors.filter(t=>t.rate<=budget&&(fmt==="Any format"||t.format.includes(fmt)));document.getElementById("resultNote").textContent=`${found.length} tutor${found.length===1?"":"s"} shown • Filters can be adjusted in the search screen.`;document.getElementById("tutorList").innerHTML=found.map(t=>`<div class="card"><div class="tutor"><img class="avatar" src="${t.photo}" alt=""><div style="flex:1"><div class="name">${t.name}</div><div class="small">${t.subjects}</div><span class="verified">✓ Verified</span></div><div class="rate">RM ${t.rate}/hr</div></div><div class="tags"><span class="tag">★ ${t.stars} (${t.reviews})</span><span class="tag">${t.format}</span><span class="tag">${t.availability}</span></div><button class="btn secondary" onclick="openProfile('${t.name}')">View profile</button></div>`).join("");show("results");}
+function openProfile(name){current=tutors.find(t=>t.name===name);document.getElementById("profileContent").innerHTML=`<div class="tutor"><img class="avatar" src="${current.photo}"><div><div class="name">${current.name}</div><div class="small">${current.subjects}</div><span class="verified">✓ Identity verified</span></div></div><div class="card"><div class="row"><b>Hourly rate</b><span class="rate">RM ${current.rate}/hr</span></div><hr><b>About the tutor</b><p>${current.bio}</p><b>Qualifications</b><p>${current.qual}</p><div class="tags"><span class="tag">★ ${current.stars} · ${current.reviews} reviews</span><span class="tag">${current.format}</span><span class="tag">${current.availability}</span></div></div><button class="btn" onclick="show('booking')">Book a session →</button>`;show("profile");}
+function pickSlot(el){document.querySelectorAll("#slots .slot").forEach(x=>x.classList.remove("active"));el.classList.add("active");chosenSlot=el.textContent;}
+function formatPick(el){el.parentElement.querySelectorAll(".slot").forEach(x=>x.classList.remove("active"));el.classList.add("active");chosenFormat=el.textContent;}
+function confirmBooking(){let date=document.getElementById("date").value;if(!date||!chosenSlot){alert("Please select a date and time.");return;}document.getElementById("confirmationDetails").innerHTML=`<b>${current.name}</b><p>${current.subjects}</p><hr><div class="row"><span>Date</span><b>${date}</b></div><div class="row" style="margin-top:8px"><span>Time</span><b>${chosenSlot}</b></div><div class="row" style="margin-top:8px"><span>Format</span><b>${chosenFormat}</b></div><div class="row" style="margin-top:8px"><span>Rate</span><b>RM ${current.rate}/hour</b></div>`;show("confirmed");}
+</script></body></html>
